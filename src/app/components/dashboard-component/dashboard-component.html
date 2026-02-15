@@ -1,0 +1,15 @@
+<div class="dashboard-container">
+  <h2>Account Dashboard</h2>
+
+  <div *ngIf="account; else noAccount">
+    <p><strong>ID:</strong> {{ account.id }}</p>
+    <p><strong>Holder Name:</strong> {{ account.holderName }}</p>
+    <p><strong>Status:</strong> {{ account.status }}</p>
+    <p><strong>Balance:</strong> {{ balance | currency:'USD' }}</p>
+    <p><strong>Last Updated:</strong> {{ account.lastUpdated | date:'short' }}</p>
+  </div>
+
+  <ng-template #noAccount>
+    <p>No account data available.</p>
+  </ng-template>
+</div>
