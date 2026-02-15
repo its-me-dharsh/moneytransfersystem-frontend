@@ -1,15 +1,41 @@
-<div class="dashboard-container">
-  <h2>Account Dashboard</h2>
+<div class="dashboard-wrapper">
 
-  <div *ngIf="account; else noAccount">
-    <p><strong>ID:</strong> {{ account.id }}</p>
-    <p><strong>Holder Name:</strong> {{ account.holderName }}</p>
-    <p><strong>Status:</strong> {{ account.status }}</p>
-    <p><strong>Balance:</strong> {{ balance | currency:'USD' }}</p>
-    <p><strong>Last Updated:</strong> {{ account.lastUpdated | date:'short' }}</p>
+  <!-- Greeting -->
+  <div class="greeting">
+    <div class="greet-line">Good Morning,</div>
+    <div class="greet-name">{{ account?.holderName }} 👋</div>
   </div>
 
-  <ng-template #noAccount>
-    <p>No account data available.</p>
-  </ng-template>
+  <!-- Balance Card -->
+  <div class="balance-box">
+    <div class="balance-label">Available Balance</div>
+    <div class="balance-value">₹ {{ balance }}</div>
+    <div class="balance-account">Account: {{ accountId }}</div>
+  </div>
+
+  <!-- Grid Action Buttons -->
+  <div class="action-grid">
+
+    <div class="action-card" (click)="goToTransfer()">
+      <div class="action-icon">💸</div>
+      <div class="action-text">Transfer</div>
+    </div>
+
+    <div class="action-card" (click)="goToHistory()">
+      <div class="action-icon">📜</div>
+      <div class="action-text">History</div>
+    </div>
+
+    <div class="action-card">
+      <div class="action-icon">👤</div>
+      <div class="action-text">Profile</div>
+    </div>
+
+    <div class="action-card" (click)="logout()">
+      <div class="action-icon">🚪</div>
+      <div class="action-text">Logout</div>
+    </div>
+
+  </div>
+
 </div>

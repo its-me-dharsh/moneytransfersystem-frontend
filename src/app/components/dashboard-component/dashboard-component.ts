@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Account } from '../../account';
 import { Accountservice } from '../../services/accountservice';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard-component',
@@ -18,7 +18,8 @@ export class DashboardComponent{
 
   constructor(
     private accountService: Accountservice,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -38,4 +39,27 @@ export class DashboardComponent{
       error: (err) => console.error('Error fetching balance:', err)
     });
   }
+
+  goToTransfer(): void {
+  // navigate to transfer screen
+  // you can pass accountId if needed
+  this.router.navigate(['/transfer']);
 }
+
+goToHistory(): void {
+  // navigate to history screen
+  this.router.navigate(['/history', this.accountId]);
+}
+
+logout(): void {
+  // clear session and redirect to login
+  // sessionStorage.clear();
+  // if you have AuthService, call authService.logout()
+  // then navigate back to login
+}
+
+
+  
+}
+
+

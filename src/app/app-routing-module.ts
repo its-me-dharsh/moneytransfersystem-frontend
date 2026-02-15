@@ -3,7 +3,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { TransferComponent } from './components/transfer-component/transfer-component';
 import { HistoryComponent } from './components/history-component/history-component';
 import { DashboardComponent } from './components/dashboard-component/dashboard-component';
-import { LoginComponent } from './components/login-component/login-component';
 
 const routes: Routes = [
   // Dashboard route (e.g., /dashboard/1)
@@ -18,8 +17,10 @@ const routes: Routes = [
   // Default redirect
   { path: '', redirectTo: '/dashboard/:id', pathMatch: 'full' },
 
+  // { path: '', component: LoginComponent },
+
   // Wildcard route for 404
-  { path: 'login', component: LoginComponent }
+  { path: '**',redirectTo: '/dashboard/:id', pathMatch: 'full'}
 ];
 
 @NgModule({

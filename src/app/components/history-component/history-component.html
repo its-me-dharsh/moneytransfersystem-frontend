@@ -1,34 +1,105 @@
-<div class="history-container">
-  <h2>Transaction History for Account {{ accountId }}</h2>
+<div class="container mt-5 history-container">
+  <div class="history-card">
+    <!-- Header -->
+    <header class="history-card__header">
+      <div class="history-card__icon" aria-hidden="true">▣</div>
+      <h2 class="history-card__title">
+        Transaction History for Account {{ accountId }}
+      </h2>
+    </header>
 
-  <table class="table table-striped" *ngIf="transactions.length > 0; else noTransactions">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>From Account</th>
-        <th>To Account</th>
-        <th>Amount</th>
-        <th>Status</th>
-        <th>Failure Reason</th>
-        <th>Idempotency Key</th>
-        <th>Created On</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let tx of transactions">
-        <td>{{ tx.id }}</td>
-        <td>{{ tx.fromAccountID }}</td>
-        <td>{{ tx.toAccountID }}</td>
-        <td>{{ tx.amount | currency:'USD' }}</td>
-        <td>{{ tx.status }}</td>
-        <td>{{ tx.failureReason || '—' }}</td>
-        <td>{{ tx.idempotencyKey }}</td>
-        <td>{{ tx.createdOn | date:'short' }}</td>
-      </tr>
-    </tbody>
-  </table>
+    <!-- Segmented filters (optional; no JS yet) -->
+    <div class="history-card__segments" role="tablist" aria-label="Filters">
+      <button class="segment is-active" role="tab" aria-selected="true">All</button>
+      <button class="segment" role="tab" aria-selected="false">Sent</button>
+      <button class="segment" role="tab" aria-selected="false">Received</button>
+    </div>
 
-  <ng-template #noTransactions>
-    <p>No transactions found for this account.</p>
-  </ng-template>
+    <!-- Transaction list (replaces table) -->
+    <ng-container *ngIf="transactions.length > 0; else noTransactions">
+      <ul class="tx-list">
+        <li class="tx" *ngFor="let tx of transactions">
+          <!-- Leading dot based on direction -->
+          <div
+            class="tx__dot"
+            [ngClass]="{
+              'tx__dot--out': tx.fromAccountID === accountId,
+              'tx__dot--in':  tx.toAccountID   === accountId
+            }"
+            [title]="tx.fromAccountID === accountId ? 'Debit' : 'Credit'">
+            {{ tx.fromAccountID === accountId ? '–' : '+' }}
+          </div>
+
+          <!-- Main -->
+          <div class="tx__main">
+            <div class="tx__title">
+              <!-- Build a friendly title similar to the mock -->
+              <ng-container *ngIf="tx.fromAccountID === accountId; else incomingTitle">
+                Transfer to {{ tx.toAccountID }}
+              </ng-container>
+              <ng-template #incomingTitle>
+                Received from {{ tx.fromAccountID }}
+              </ng-template>
+            </div>
+            <div class="tx__meta">
+              {{ tx.createdOn | date:'mediumDate' }} •
+              <span class="hide-mobile">{{ tx.createdOn | date:'shortTime' }}</span>
+              <span class="tx__meta__id"> • ID: {{ tx.id }}</span>
+              <span class="tx__meta__idem hide-mobile"> • Key: {{ tx.idempotencyKey }}</span>
+            </div>
+            <div class="tx__submeta" *ngIf="tx.failureReason">
+              <span class="badge badge--failed">Failed</span>
+              <span class="tx__reason">{{ tx.failureReason }}</span>
+            </div>
+          </div>
+
+          <!-- Side: amount + status -->
+          <div class="tx__side">
+            <div
+              class="tx__amount"
+              [ngClass]="{
+                'tx__amount--neg': tx.fromAccountID === accountId,
+                'tx__amount--pos': tx.toAccountID   === accountId
+              }">
+              {{ tx.amount | currency:'USD' }}
+            </div>
+
+            <ng-container *ngIf="!tx.failureReason">
+              <span
+                class="badge"
+                [ngClass]="{
+                  'badge--success': tx.status.toUpperCase() === 'SUCCESS',
+                  'badge--failed':  tx.status.toUpperCase() === 'FAILED'
+                }">
+                {{ tx.status }}
+              </span>
+            </ng-container>
+          </div>
+        </li>
+      </ul>
+    </ng-container>
+
+    <ng-template #noTransactions>
+      <div class="history-empty">
+        <div class="history-empty__icon">🧾</div>
+        <p>No transactions found for this account.</p>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Bottom tab bar (optional; for visual parity with the screenshot) -->
+  <nav class="tabbar" aria-label="Bottom navigation">
+    <a class="tab" href="javascript:void(0)">
+      <span class="ico" aria-hidden="true"></span>
+      <span>Home</span>
+    </a>
+    <a class="tab" href="javascript:void(0)">
+      <span class="ico" aria-hidden="true"></span>
+      <span>Transfer</span>
+    </a>
+    <a class="tab is-active" href="javascript:void(0)">
+      <span class="ico" aria-hidden="true"></span>
+      <span>History</span>
+    </a>
+  </nav>
 </div>
